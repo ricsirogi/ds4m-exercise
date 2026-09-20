@@ -50,4 +50,9 @@ class Rotation2D:
         return f"Rotation(point={self.point}, angle={self.angle_deg})"
 
     def __mul__(self, other: Rotation2D):
-        return self.transformation_matrix.dot(other=other.transformation_matrix)
+        if not isinstance(other, Rotation2D):
+            return NotImplemented
+        if other.point == self.point:
+            return Rotation2D(point=self.point, angle=self.angle_deg + other.angle_deg)
+        else:
+            raise ValueError("Rotation points don't match")
