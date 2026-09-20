@@ -19,7 +19,6 @@ class Rotation2D:
         return self.__transformation_matrix
 
     def __repr__(self):
-        return "Rotation2D(point=..., angle=...)"
-
+        return f"Rotation2D(point={self.point}, angle={self.angle})"
 
 
