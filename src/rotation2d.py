@@ -12,7 +12,8 @@ class Rotation2D:
             raise TypeError("Angle must be a float or integer.")
 
         self.point = point
-        self.angle = angle
+        self.angle_rad = np.deg2rad(angle)
+        self.angle_deg = angle
 
         self.__transformation_matrix = None
         self.__inverse_transformation_matrix = None
