@@ -10,6 +10,7 @@ class Rotation2D:
         self.angle = angle
 
         self.__transformation_matrix = None
+        self.__inverse_transformation_matrix = None
 
     @property
     def transformation_matrix(self):
@@ -19,6 +20,15 @@ class Rotation2D:
         self.__transformation_matrix = pd.DataFrame(data=[first_row, second_row])
 
         return self.__transformation_matrix
+
+    @property
+    def inverse_transformation_matrix(self):
+        first_row = [np.cos(-self.angle), -np.sin(-self.angle)]
+        second_row = [np.sin(-self.angle), np.cos(-self.angle)]
+
+        self.__inverse_transformation_matrix = pd.DataFrame(data=[first_row, second_row])
+
+        return self.__inverse_transformation_matrix
 
     def __repr__(self):
         return f"Rotation2D(point={self.point}, angle={self.angle})"

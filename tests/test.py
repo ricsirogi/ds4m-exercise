@@ -51,6 +51,37 @@ class TestRotation2D:
         expected = np.eye(2)
         np.testing.assert_allclose(matrix.values, expected, atol=1e-7)
 
+    def test_inverse_transformation_matrix_values(self, default_rotation: Rotation2D):
+        """
+        Test inverse matrix values for a known 90-degree rotation.
+
+        :param Rotation2D default_rotation: The rotation object used for testing
+        """
+
+        inv_matrix = default_rotation.inverse_transformation_matrix
+
+        assert isinstance(inv_matrix, pd.DataFrame)
+        assert inv_matrix.shape == (2, 2)
+
+        # cos(-pi/2) = 0, sin(-pi/2) = -1
+        expected = np.array([[0.0, 1.0], [-1.0, 0.0]])
+        np.testing.assert_allclose(inv_matrix.values, expected, atol=1e-7)
+
+    def test_inverse_matrix_cancels_transformation_matrix(self, default_rotation: Rotation2D):
+        """
+        Test that dotting transformation_matrix with its inverse yields the identity matrix.
+
+        :param Rotation2D default_rotation: The rotation object used for testing
+        """
+
+        matrix = default_rotation.transformation_matrix
+        inv_matrix = default_rotation.inverse_transformation_matrix
+
+        product = matrix.dot(inv_matrix)
+        expected_identity = np.eye(2)
+
+        np.testing.assert_allclose(product.values, expected_identity, atol=1e-7)
+
     def test_repr(self, default_rotation: Rotation2D):
         """
         Test string representation of the object.
