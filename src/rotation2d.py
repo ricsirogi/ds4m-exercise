@@ -20,19 +20,29 @@ class Rotation2D:
 
     @property
     def transformation_matrix(self):
-        first_row = [np.cos(self.angle), -np.sin(self.angle)]
-        second_row = [np.sin(self.angle), np.cos(self.angle)]
-
-        self.__transformation_matrix = pd.DataFrame(data=[first_row, second_row])
+        self.__transformation_matrix = Rotation2D.get_rotation_matrix(self.angle_rad, point=self.point)
 
         return self.__transformation_matrix
 
+    @staticmethod
+    def get_rotation_matrix(angle: float, point: tuple[float, float]) -> np.ndarray:
+        first_matrix = np.array([[1, 0, point[0]],
+                                   [0, 1, point[1]],
+                                   [0, 0, 1]])
+
+        second_matrix = np.array([[np.cos(angle), -np.sin(angle), 0],
+                                  [np.sin(angle), np.cos(angle), 0],
+                                  [0, 0, 1]])
+
+        third_matrix = np.array([[1, 0, -point[0]],
+                                 [0, 1, -point[1]],
+                                 [0, 0, 1]])
+
+        return first_matrix @ second_matrix @ third_matrix
+
     @property
     def inverse_transformation_matrix(self):
-        first_row = [np.cos(-self.angle), -np.sin(-self.angle)]
-        second_row = [np.sin(-self.angle), np.cos(-self.angle)]
-
-        self.__inverse_transformation_matrix = pd.DataFrame(data=[first_row, second_row])
+        self.__inverse_transformation_matrix = Rotation2D.get_rotation_matrix(-self.angle_rad, point=self.point)
 
         return self.__inverse_transformation_matrix
 
