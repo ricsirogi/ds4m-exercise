@@ -47,7 +47,7 @@ class Rotation2D:
         return self.__inverse_transformation_matrix
 
     def __repr__(self):
-        return f"Rotation2D(point={self.point}, angle={self.angle})"
+        return f"Rotation(point={self.point}, angle={self.angle_deg})"
 
     def __mul__(self, other: Rotation2D):
         return self.transformation_matrix.dot(other=other.transformation_matrix)
