@@ -5,7 +5,12 @@ import pandas as pd
 
 
 class Rotation2D:
-    def __init__(self, point: tuple[float, float], angle: float):
+    def __init__(self, point: tuple[float, float] = (0.0, 0.0), angle: float = 0.0):
+        if not (isinstance(point, tuple) and len(point) == 2):
+            raise TypeError("Point must be a 2-element tuple.")
+        if not isinstance(angle, (int, float)):
+            raise TypeError("Angle must be a float or integer.")
+
         self.point = point
         self.angle = angle
 
