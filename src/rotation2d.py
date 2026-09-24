@@ -106,7 +106,7 @@ class Rotation2D:
         :param float | int angle: The rotation angle in radians.
         :param tuple[float | int, float | int] point: The center point of rotation (x, y).
 
-        :return np.ndarray matrix: The 3x3 transformation matrix.
+        :return np.ndarray rotation_matrix: The 3x3 transformation matrix.
         """
         Rotation2D.check_input(angle=angle, point=point)
 
@@ -122,4 +122,6 @@ class Rotation2D:
                                  [0, 1, -point[1]],
                                  [0, 0, 1]])
 
-        return first_matrix @ second_matrix @ third_matrix
+        rotation_matrix = first_matrix @ second_matrix @ third_matrix
+
+        return rotation_matrix
