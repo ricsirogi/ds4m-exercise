@@ -49,6 +49,21 @@ class Rotation2D:
         else:
             raise ValueError("Rotation points don't match")
 
+    def __call__(self, point_to_rotate: tuple[float | int, float | int]) -> tuple[float | int, float | int]:
+        """
+        Rotates the point given around the center point by the angle of the rotation.
+
+        :param tuple[float | int, float | int] point_to_rotate: The point to be rotated
+        :return tuple[float | int, float | int]: The rotated point.
+        """
+        Rotation2D.check_input(point=point_to_rotate)
+
+        new_point = np.array(object=[point_to_rotate[0], point_to_rotate[1], 1])
+
+        result = Rotation2D.get_rotation_matrix(self.angle_rad, point=self.point) @ new_point
+
+        return float(result[0]), float(result[1])
+
     @property
     def inverse_transformation_matrix(self):
         """
