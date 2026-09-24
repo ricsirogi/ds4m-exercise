@@ -66,7 +66,7 @@ class Rotation2D:
         """
         Gets the inverse transformation matrix for this rotation.
 
-        :return np.ndarray matrix: The 3x3 homogeneous matrix representing the inverse rotation.
+        :return np.ndarray __inverse_transformation_matrix: The 3x3 homogeneous matrix representing the inverse rotation.
         """
 
         self.__inverse_transformation_matrix = Rotation2D.get_rotation_matrix(-self.angle_rad, point=self.point)
@@ -78,7 +78,7 @@ class Rotation2D:
         """
         Gets the transformation matrix associated with this rotation.
 
-        :return np.ndarray matrix: The 3x3 homogeneous matrix representing the forward rotation.
+        :return np.ndarray __transformation_matrix: The 3x3 homogeneous matrix representing the forward rotation.
         """
 
         self.__transformation_matrix = Rotation2D.get_rotation_matrix(self.angle_rad, point=self.point)
