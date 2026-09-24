@@ -18,8 +18,8 @@ class Rotation2D:
         self.angle_rad: np.number = np.deg2rad(angle)
         self.angle_deg: float | int = angle
 
-        self.__transformation_matrix = None
-        self.__inverse_transformation_matrix = None
+        self.__transformation_matrix: np.ndarray = np.array(object=[])
+        self.__inverse_transformation_matrix: np.ndarray = np.array(object=[])
 
     def __repr__(self):
         """
