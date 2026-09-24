@@ -111,13 +111,11 @@ class Rotation2D:
         Rotation2D.check_input(angle=angle, point=point)
 
         first_matrix = np.array([[1, 0, point[0]],
-                                   [0, 1, point[1]],
-                                   [0, 0, 1]])
-
+                                 [0, 1, point[1]],
+                                 [0, 0, 1]])
         second_matrix = np.array([[np.cos(angle), -np.sin(angle), 0],
                                   [np.sin(angle), np.cos(angle), 0],
                                   [0, 0, 1]])
-
         third_matrix = np.array([[1, 0, -point[0]],
                                  [0, 1, -point[1]],
                                  [0, 0, 1]])
