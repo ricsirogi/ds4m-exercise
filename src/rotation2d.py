@@ -4,19 +4,19 @@ import numpy as np
 
 
 class Rotation2D:
-    def __init__(self, point: tuple[float, float] = (0.0, 0.0), angle: float = 0.0):
+    def __init__(self, point: tuple[float | int, float | int] = (0.0, 0.0), angle: float | int = 0.0):
         """
         Initializes a 2D rotation around a center point by a given angle in degrees.
 
-        :param tuple[float, float] point: The center point of rotation (x, y). Defaults to (0.0, 0.0).
-        :param float angle: The rotation angle in degrees. Defaults to 0.0.
+        :param tuple[float | int, float | int] point: The center point of rotation (x, y). Defaults to (0.0, 0.0).
+        :param float | int angle: The rotation angle in degrees. Defaults to 0.0.
         """
 
         Rotation2D.check_input(angle=angle, point=point)
 
-        self.point = point
-        self.angle_rad = np.deg2rad(angle)
-        self.angle_deg = angle
+        self.point: tuple[float | int, float | int] = (point[0], point[1])
+        self.angle_rad: np.number = np.deg2rad(angle)
+        self.angle_deg: float | int = angle
 
         self.__transformation_matrix = None
         self.__inverse_transformation_matrix = None
@@ -99,12 +99,12 @@ class Rotation2D:
                 raise TypeError("Point elements must be numeric.")
 
     @staticmethod
-    def get_rotation_matrix(angle: float, point: tuple[float, float]) -> np.ndarray:
+    def get_rotation_matrix(angle: float | int | np.number, point: tuple[float | int, float | int]) -> np.ndarray:
         """
         Calculates the 3x3 homogeneous transformation matrix for a 2D rotation.
 
-        :param float angle: The rotation angle in radians.
-        :param tuple[float, float] point: The center point of rotation (x, y).
+        :param float | int angle: The rotation angle in radians.
+        :param tuple[float | int, float | int] point: The center point of rotation (x, y).
 
         :return np.ndarray matrix: The 3x3 transformation matrix.
         """
