@@ -12,10 +12,7 @@ class Rotation2D:
         :param float angle: The rotation angle in degrees. Defaults to 0.0.
         """
 
-        if not (isinstance(point, tuple) and len(point) == 2):
-            raise TypeError("Point must be a 2-element tuple.")
-        if not isinstance(angle, (int, float)):
-            raise TypeError("Angle must be a float or integer.")
+        Rotation2D.check_input(angle=angle, point=point)
 
         self.point = point
         self.angle_rad = np.deg2rad(angle)
@@ -89,6 +86,19 @@ class Rotation2D:
         return self.__transformation_matrix
 
     @staticmethod
+    def check_input(angle: float | int | np.number = None,
+                    point: tuple[float | int, float | int] = None):
+
+        if angle is not None:
+            if not isinstance(angle, (int, float, np.number)):
+                raise TypeError("Angle must be a float or integer.")
+        if point is not None:
+            if not (isinstance(point, (tuple, list)) and len(point) == 2):
+                raise TypeError("Point must be a 2-element tuple or list.")
+            if not all(isinstance(x, (int, float, np.number)) for x in point):
+                raise TypeError("Point elements must be numeric.")
+
+    @staticmethod
     def get_rotation_matrix(angle: float, point: tuple[float, float]) -> np.ndarray:
         """
         Calculates the 3x3 homogeneous transformation matrix for a 2D rotation.
@@ -98,6 +108,7 @@ class Rotation2D:
 
         :return np.ndarray matrix: The 3x3 transformation matrix.
         """
+        Rotation2D.check_input(angle=angle, point=point)
 
         first_matrix = np.array([[1, 0, point[0]],
                                    [0, 1, point[1]],
