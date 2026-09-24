@@ -5,6 +5,10 @@ from src.rotation2d import Rotation2D
 
 
 class TestRotation2D:
+    """
+    Test suite for the Rotation2D class.
+    """
+
     @pytest.fixture
     def default_rotation(self) -> Rotation2D:
         """
@@ -14,6 +18,10 @@ class TestRotation2D:
         """
 
         return Rotation2D(point=(0.0, 0.0), angle=90.0)
+
+    # -------------------------------------------------------------------------
+    # Initialization & Attributes
+    # -------------------------------------------------------------------------
 
     def test_default_initialization(self):
         """
@@ -43,6 +51,56 @@ class TestRotation2D:
         assert default_rotation.point == (0.0, 0.0)
         assert default_rotation.angle_deg == 90.0
         assert default_rotation.angle_rad == pytest.approx(np.pi / 2)
+
+    # -------------------------------------------------------------------------
+    # String Representation
+    # -------------------------------------------------------------------------
+
+    def test_repr(self, default_rotation: Rotation2D):
+        """
+        Tests string representation of the object.
+
+        :param Rotation2D default_rotation: The rotation fixture object used for testing.
+        """
+
+        assert repr(default_rotation) == "Rotation(point=(0.0, 0.0), angle=90.0)"
+
+    # -------------------------------------------------------------------------
+    # Point Rotation Execution (__call__)
+    # -------------------------------------------------------------------------
+
+    def test_call_origin(self, default_rotation: Rotation2D):
+        """
+        Tests executing rotation on a point around the origin using __call__.
+
+        :param Rotation2D default_rotation: The rotation fixture object used for testing.
+        """
+
+        transformed_point = default_rotation((1.0, 0.0))
+        assert transformed_point == pytest.approx((0.0, 1.0), abs=1e-7)
+
+    def test_call_non_origin_center(self):
+        """
+        Tests executing rotation on a point around a non-origin center using __call__.
+        """
+
+        rot = Rotation2D(point=(2.0, 2.0), angle=180.0)
+        transformed_point = rot((3.0, 2.0))
+        assert transformed_point == pytest.approx((1.0, 2.0), abs=1e-7)
+
+    def test_call_accepts_list_input(self, default_rotation: Rotation2D):
+        """
+        Tests executing __call__ with a list instead of a tuple.
+
+        :param Rotation2D default_rotation: The rotation fixture object used for testing.
+        """
+
+        transformed_point = default_rotation([1.0, 0.0])
+        assert transformed_point == pytest.approx((0.0, 1.0), abs=1e-7)
+
+    # -------------------------------------------------------------------------
+    # Matrix Calculations & Properties
+    # -------------------------------------------------------------------------
 
     def test_transformation_matrix_values(self, default_rotation: Rotation2D):
         """
@@ -87,9 +145,9 @@ class TestRotation2D:
         assert inv_matrix.shape == (3, 3)
 
         expected = np.array([
-            [0.0, 1.0, 0.0],
+            [ 0.0, 1.0, 0.0],
             [-1.0, 0.0, 0.0],
-            [0.0, 0.0, 1.0]
+            [ 0.0, 0.0, 1.0]
         ])
         np.testing.assert_allclose(inv_matrix, expected, atol=1e-7)
 
@@ -121,14 +179,9 @@ class TestRotation2D:
         ])
         np.testing.assert_allclose(matrix, expected, atol=1e-7)
 
-    def test_repr(self, default_rotation: Rotation2D):
-        """
-        Tests string representation of the object.
-
-        :param Rotation2D default_rotation: The rotation fixture object used for testing.
-        """
-
-        assert repr(default_rotation) == "Rotation(point=(0.0, 0.0), angle=90.0)"
+    # -------------------------------------------------------------------------
+    # Composition (__mul__)
+    # -------------------------------------------------------------------------
 
     def test_multiplication_combines_transformations(self):
         """
@@ -165,40 +218,9 @@ class TestRotation2D:
         with pytest.raises(TypeError):
             _ = default_rotation * "not_a_rotation_object"
 
-    def test_call_origin(self, default_rotation: Rotation2D):
-        """
-        Tests executing rotation on a point around the origin using __call__.
-
-        :param Rotation2D default_rotation: The rotation fixture object used for testing.
-        """
-
-        transformed_point = default_rotation((1.0, 0.0))
-
-        assert pytest.approx(transformed_point[0], abs=1e-7) == 0.0
-        assert pytest.approx(transformed_point[1], abs=1e-7) == 1.0
-
-    def test_call_non_origin_center(self):
-        """
-        Tests executing rotation on a point around a non-origin center using __call__.
-        """
-
-        rot = Rotation2D(point=(2.0, 2.0), angle=180.0)
-        transformed_point = rot((3.0, 2.0))
-
-        assert pytest.approx(transformed_point[0], abs=1e-7) == 1.0
-        assert pytest.approx(transformed_point[1], abs=1e-7) == 2.0
-
-    def test_call_accepts_list_input(self, default_rotation: Rotation2D):
-        """
-        Tests executing __call__ with a list instead of a tuple.
-
-        :param Rotation2D default_rotation: The rotation fixture object used for testing.
-        """
-
-        transformed_point = default_rotation([1.0, 0.0])
-
-        assert pytest.approx(transformed_point[0], abs=1e-7) == 0.0
-        assert pytest.approx(transformed_point[1], abs=1e-7) == 1.0
+    # -------------------------------------------------------------------------
+    # Validation & Error Handling
+    # -------------------------------------------------------------------------
 
     def test_invalid_input_types_raise_type_error(self, default_rotation: Rotation2D):
         """
@@ -229,3 +251,17 @@ class TestRotation2D:
 
         with pytest.raises(TypeError):
             Rotation2D(point=(1.0,))
+
+        with pytest.raises(TypeError):
+            Rotation2D(point=())
+
+    def test_get_rotation_matrix_invalid_inputs_raise_type_error(self):
+        """
+        Tests that static method get_rotation_matrix validates inputs independently.
+        """
+
+        with pytest.raises(TypeError):
+            Rotation2D.get_rotation_matrix("invalid_angle", point=(0.0, 0.0))
+
+        with pytest.raises(TypeError):
+            Rotation2D.get_rotation_matrix(np.pi, point="invalid_point")
