@@ -1,3 +1,5 @@
+# Made by Krisztián Richárd Rogozsán
+
 from __future__ import annotations
 
 import numpy as np

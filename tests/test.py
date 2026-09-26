@@ -1,3 +1,5 @@
+# Made by Krisztián Richárd Rogozsán
+
 import numpy as np
 import pytest
 
