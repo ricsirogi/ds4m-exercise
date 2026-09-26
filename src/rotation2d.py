@@ -18,14 +18,14 @@ class Rotation2D:
         self.angle_rad: np.number = np.deg2rad(angle)
         self.angle_deg: float | int = angle
 
-        self.__transformation_matrix: np.ndarray = np.array(object=[])
-        self.__inverse_transformation_matrix: np.ndarray = np.array(object=[])
+        self.__transformation_matrix: np.ndarray = np.array([])
+        self.__inverse_transformation_matrix: np.ndarray = np.array([])
 
     def __repr__(self):
         """
         Returns a string representation of the Rotation2D instance.
 
-        :return str repr: Formatted string representing the object.
+        :return str: Formatted string representing the object.
         """
 
         return f"Rotation(point={self.point}, angle={self.angle_deg})"
@@ -36,7 +36,7 @@ class Rotation2D:
 
         :param Rotation2D other: Another rotation instance to compose with.
 
-        :return Rotation2D result: A new rotation instance representing the combined rotation.
+        :return Rotation2D: A new rotation instance representing the combined rotation.
         """
 
         if not isinstance(other, Rotation2D):
@@ -53,11 +53,12 @@ class Rotation2D:
         :param tuple[float | int, float | int] point_to_rotate: The point to be rotated
         :return tuple[float | int, float | int]: The rotated point.
         """
+
         Rotation2D.check_input(point=point_to_rotate)
 
-        new_point = np.array(object=[point_to_rotate[0], point_to_rotate[1], 1])
+        point_to_rotate = np.array([point_to_rotate[0], point_to_rotate[1], 1])
 
-        result = Rotation2D.get_rotation_matrix(self.angle_rad, point=self.point) @ new_point
+        result = Rotation2D.get_transformation_matrix(self.angle_rad, point=self.point) @ point_to_rotate
 
         return float(result[0]), float(result[1])
 
@@ -69,7 +70,7 @@ class Rotation2D:
         :return np.ndarray __inverse_transformation_matrix: The 3x3 homogeneous matrix representing the inverse rotation.
         """
 
-        self.__inverse_transformation_matrix = Rotation2D.get_rotation_matrix(-self.angle_rad, point=self.point)
+        self.__inverse_transformation_matrix = Rotation2D.get_transformation_matrix(-self.angle_rad, point=self.point)
 
         return self.__inverse_transformation_matrix
 
@@ -81,17 +82,24 @@ class Rotation2D:
         :return np.ndarray __transformation_matrix: The 3x3 homogeneous matrix representing the forward rotation.
         """
 
-        self.__transformation_matrix = Rotation2D.get_rotation_matrix(self.angle_rad, point=self.point)
+        self.__transformation_matrix = Rotation2D.get_transformation_matrix(self.angle_rad, point=self.point)
 
         return self.__transformation_matrix
 
     @staticmethod
     def check_input(angle: float | int | np.number = None,
                     point: tuple[float | int, float | int] = None):
+        """
+        Checks if the given inputs are valid. Throws and error if they're not.
+
+        :param float | int | np.number angle:
+        :param tuple[float | int, float | int] point:
+        """
 
         if angle is not None:
             if not isinstance(angle, (int, float, np.number)):
                 raise TypeError("Angle must be a float or integer.")
+
         if point is not None:
             if not (isinstance(point, (tuple, list)) and len(point) == 2):
                 raise TypeError("Point must be a 2-element tuple or list.")
@@ -99,7 +107,7 @@ class Rotation2D:
                 raise TypeError("Point elements must be numeric.")
 
     @staticmethod
-    def get_rotation_matrix(angle: float | int | np.number, point: tuple[float | int, float | int]) -> np.ndarray:
+    def get_transformation_matrix(angle: float | int | np.number, point: tuple[float | int, float | int]) -> np.ndarray:
         """
         Calculates the 3x3 homogeneous transformation matrix for a 2D rotation.
 
@@ -108,6 +116,7 @@ class Rotation2D:
 
         :return np.ndarray rotation_matrix: The 3x3 transformation matrix.
         """
+
         Rotation2D.check_input(angle=angle, point=point)
 
         first_matrix = np.array([[1, 0, point[0]],

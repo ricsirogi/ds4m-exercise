@@ -50,7 +50,7 @@ class TestRotation2D:
 
         assert default_rotation.point == (0.0, 0.0)
         assert default_rotation.angle_deg == 90.0
-        assert default_rotation.angle_rad == pytest.approx(np.pi / 2)
+        assert default_rotation.angle_rad == pytest.approx(expected=np.pi / 2)
 
     # -------------------------------------------------------------------------
     # String Representation
@@ -171,7 +171,7 @@ class TestRotation2D:
         Tests calling the get_rotation_matrix static method directly.
         """
 
-        matrix = Rotation2D.get_rotation_matrix(angle=np.pi / 2, point=(0.0, 0.0))
+        matrix = Rotation2D.get_transformation_matrix(angle=np.pi / 2, point=(0.0, 0.0))
         expected = np.array([
             [0.0, -1.0, 0.0],
             [1.0,  0.0, 0.0],
@@ -261,7 +261,7 @@ class TestRotation2D:
         """
 
         with pytest.raises(TypeError):
-            Rotation2D.get_rotation_matrix(angle="invalid_angle", point=(0.0, 0.0))
+            Rotation2D.get_transformation_matrix(angle="invalid_angle", point=(0.0, 0.0))
 
         with pytest.raises(TypeError):
-            Rotation2D.get_rotation_matrix(angle=np.pi, point="invalid_point")
+            Rotation2D.get_transformation_matrix(angle=np.pi, point="invalid_point")
