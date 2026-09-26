@@ -76,8 +76,8 @@ class TestRotation2D:
         :param Rotation2D default_rotation: The rotation fixture object used for testing.
         """
 
-        transformed_point = default_rotation((1.0, 0.0))
-        assert transformed_point == pytest.approx((0.0, 1.0), abs=1e-7)
+        transformed_point = default_rotation(point_to_rotate=(1.0, 0.0))
+        assert transformed_point == pytest.approx(expected=(0.0, 1.0), abs=1e-7)
 
     def test_call_non_origin_center(self):
         """
@@ -86,7 +86,7 @@ class TestRotation2D:
 
         rot = Rotation2D(point=(2.0, 2.0), angle=180.0)
         transformed_point = rot((3.0, 2.0))
-        assert transformed_point == pytest.approx((1.0, 2.0), abs=1e-7)
+        assert transformed_point == pytest.approx(expected=(1.0, 2.0), abs=1e-7)
 
     def test_call_accepts_list_input(self, default_rotation: Rotation2D):
         """
@@ -95,8 +95,8 @@ class TestRotation2D:
         :param Rotation2D default_rotation: The rotation fixture object used for testing.
         """
 
-        transformed_point = default_rotation([1.0, 0.0])
-        assert transformed_point == pytest.approx((0.0, 1.0), abs=1e-7)
+        transformed_point = default_rotation(point_to_rotate=[1.0, 0.0])
+        assert transformed_point == pytest.approx(expected=(0.0, 1.0), abs=1e-7)
 
     # -------------------------------------------------------------------------
     # Matrix Calculations & Properties
@@ -119,7 +119,7 @@ class TestRotation2D:
             [1.0,  0.0, 0.0],
             [0.0,  0.0, 1.0]
         ])
-        np.testing.assert_allclose(matrix, expected, atol=1e-7)
+        np.testing.assert_allclose(actual=matrix, desired=expected, atol=1e-7)
 
     def test_transformation_matrix_identity(self):
         """
@@ -130,7 +130,7 @@ class TestRotation2D:
         matrix = rot_zero.transformation_matrix
 
         expected = np.eye(3)
-        np.testing.assert_allclose(matrix, expected, atol=1e-7)
+        np.testing.assert_allclose(actual=matrix, desired=expected, atol=1e-7)
 
     def test_inverse_transformation_matrix_values(self, default_rotation: Rotation2D):
         """
@@ -149,7 +149,7 @@ class TestRotation2D:
             [-1.0, 0.0, 0.0],
             [ 0.0, 0.0, 1.0]
         ])
-        np.testing.assert_allclose(inv_matrix, expected, atol=1e-7)
+        np.testing.assert_allclose(actual=inv_matrix, desired=expected, atol=1e-7)
 
     def test_inverse_matrix_cancels_transformation_matrix(self, default_rotation: Rotation2D):
         """
@@ -164,20 +164,20 @@ class TestRotation2D:
         product = matrix @ inv_matrix
         expected_identity = np.eye(3)
 
-        np.testing.assert_allclose(product, expected_identity, atol=1e-7)
+        np.testing.assert_allclose(actual=product, desired=expected_identity, atol=1e-7)
 
     def test_get_rotation_matrix_static_method(self):
         """
         Tests calling the get_rotation_matrix static method directly.
         """
 
-        matrix = Rotation2D.get_rotation_matrix(np.pi / 2, point=(0.0, 0.0))
+        matrix = Rotation2D.get_rotation_matrix(angle=np.pi / 2, point=(0.0, 0.0))
         expected = np.array([
             [0.0, -1.0, 0.0],
             [1.0,  0.0, 0.0],
             [0.0,  0.0, 1.0]
         ])
-        np.testing.assert_allclose(matrix, expected, atol=1e-7)
+        np.testing.assert_allclose(actual=matrix, desired=expected, atol=1e-7)
 
     # -------------------------------------------------------------------------
     # Composition (__mul__)
@@ -236,10 +236,10 @@ class TestRotation2D:
             Rotation2D(point=(0.0, 0.0), angle="invalid")
 
         with pytest.raises(TypeError):
-            default_rotation("not_a_point")
+            default_rotation(point_to_rotate="not_a_point")
 
         with pytest.raises(TypeError):
-            default_rotation(("a", "b"))
+            default_rotation(point_to_rotate=("a", "b"))
 
     def test_invalid_point_lengths_raise_type_error(self):
         """
@@ -261,7 +261,7 @@ class TestRotation2D:
         """
 
         with pytest.raises(TypeError):
-            Rotation2D.get_rotation_matrix("invalid_angle", point=(0.0, 0.0))
+            Rotation2D.get_rotation_matrix(angle="invalid_angle", point=(0.0, 0.0))
 
         with pytest.raises(TypeError):
-            Rotation2D.get_rotation_matrix(np.pi, point="invalid_point")
+            Rotation2D.get_rotation_matrix(angle=np.pi, point="invalid_point")
