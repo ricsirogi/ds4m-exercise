@@ -6,24 +6,27 @@ import numpy as np
 
 
 class Rotation2D:
-    def __init__(self, point: tuple[float | int, float | int] = (0.0, 0.0), angle: float | int = 0.0):
+    def __init__(self, point: tuple[float | int, float | int] = (0.0, 0.0),
+                 angle: float | int = 0.0
+                 ):
         """
         Initializes a 2D rotation around a center point by a given angle in degrees.
 
-        :param tuple[float | int, float | int] point: The center point of rotation (x, y). Defaults to (0.0, 0.0).
+        :param tuple[float | int, float | int] point: The center point of
+               rotation (x, y). Defaults to (0.0, 0.0).
         :param float | int angle: The rotation angle in degrees. Defaults to 0.0.
         """
 
         Rotation2D.check_input(angle=angle, point=point)
 
-        self.point: tuple[float | int, float | int] = (point[0], point[1])
+        self.point: tuple[float | int, float | int] = tuple(point)
         self.angle_rad: np.number = np.deg2rad(angle)
         self.angle_deg: float | int = angle
 
         self.__transformation_matrix: np.ndarray = np.array([])
         self.__inverse_transformation_matrix: np.ndarray = np.array([])
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Returns a string representation of the Rotation2D instance.
 
@@ -32,7 +35,7 @@ class Rotation2D:
 
         return f"Rotation(point={self.point}, angle={self.angle_deg})"
 
-    def __mul__(self, other: Rotation2D):
+    def __mul__(self, other: Rotation2D) -> Rotation2D:
         """
         Composes two rotations that share the same center point.
 
@@ -48,7 +51,9 @@ class Rotation2D:
         else:
             raise ValueError("Rotation points don't match")
 
-    def __call__(self, point_to_rotate: tuple[float | int, float | int]) -> tuple[float | int, float | int]:
+    def __call__(self,
+                 point_to_rotate: tuple[float | int, float | int]
+                 ) -> tuple[float | int, float | int]:
         """
         Rotates the point given around the center point by the angle of the rotation.
 
@@ -60,31 +65,42 @@ class Rotation2D:
 
         point_to_rotate = np.array([point_to_rotate[0], point_to_rotate[1], 1])
 
-        result = Rotation2D.get_transformation_matrix(self.angle_rad, point=self.point) @ point_to_rotate
+        result = Rotation2D.get_transformation_matrix(
+            angle=self.angle_rad,
+            point=self.point
+        ) @ point_to_rotate
 
         return float(result[0]), float(result[1])
 
     @property
-    def inverse_transformation_matrix(self):
+    def inverse_transformation_matrix(self) -> np.ndarray:
         """
         Gets the inverse transformation matrix for this rotation.
 
-        :return np.ndarray __inverse_transformation_matrix: The 3x3 homogeneous matrix representing the inverse rotation.
+        :return np.ndarray __inverse_transformation_matrix:
+                The 3x3 homogeneous matrix representing the inverse rotation.
         """
 
-        self.__inverse_transformation_matrix = Rotation2D.get_transformation_matrix(-self.angle_rad, point=self.point)
+        self.__inverse_transformation_matrix = Rotation2D.get_transformation_matrix(
+            angle=-self.angle_rad,
+            point=self.point
+        )
 
         return self.__inverse_transformation_matrix
 
     @property
-    def transformation_matrix(self):
+    def transformation_matrix(self) -> np.ndarray:
         """
         Gets the transformation matrix associated with this rotation.
 
-        :return np.ndarray __transformation_matrix: The 3x3 homogeneous matrix representing the forward rotation.
+        :return np.ndarray __transformation_matrix: The 3x3 homogeneous matrix
+                representing the forward rotation.
         """
 
-        self.__transformation_matrix = Rotation2D.get_transformation_matrix(self.angle_rad, point=self.point)
+        self.__transformation_matrix = Rotation2D.get_transformation_matrix(
+            angle=self.angle_rad,
+            point=self.point
+        )
 
         return self.__transformation_matrix
 
@@ -109,9 +125,19 @@ class Rotation2D:
                 raise TypeError("Point elements must be numeric.")
 
     @staticmethod
-    def get_transformation_matrix(angle: float | int | np.number, point: tuple[float | int, float | int]) -> np.ndarray:
+    def get_transformation_matrix(angle: float | int | np.number,
+                                  point: tuple[float | int, float | int]
+                                  ) -> np.ndarray:
         """
         Calculates the 3x3 homogeneous transformation matrix for a 2D rotation.
+
+        To achieve a rotation around any point it to:
+        - Translate the point to the origin
+        - Do the rotation around the origin
+        - Translate the point back
+
+        This uses 3x3 homogeneous matrices instead of the regular 2x2 matrices, since
+        those cannot do translation, only rotation around the origin.
 
         :param float | int angle: The rotation angle in radians.
         :param tuple[float | int, float | int] point: The center point of rotation (x, y).
